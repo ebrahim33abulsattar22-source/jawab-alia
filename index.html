@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>جاوب عليا | اختبارات الصحاب</title>
+<style>
+:root{--bg:#f5f7ff;--card:#fff;--ink:#18213b;--muted:#65708a;--brand:#6658e8;--brand2:#8d5cf6;--line:#e5e8f2;--green:#14804a;--red:#c3344d}
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#f5f7ff,#f9f2ff);color:var(--ink);min-height:100vh}
+header{padding:24px 16px 18px;text-align:center;background:linear-gradient(120deg,#6658e8,#9a59ef);color:white}
+.logo{font-size:34px;font-weight:900;letter-spacing:.2px}.tag{opacity:.93;margin-top:8px}
+.wrap{max-width:850px;margin:24px auto;padding:0 14px 40px}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;margin-bottom:16px;box-shadow:0 10px 30px #2835680b}
+h2{margin:0 0 14px;font-size:22px}h3{margin:0 0 10px;font-size:17px}
+input,textarea,select{width:100%;padding:12px 13px;border:1px solid #d7dced;border-radius:12px;font:inherit;background:#fff;color:var(--ink);margin:6px 0 12px}
+textarea{min-height:70px;resize:vertical}button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:12px 16px;cursor:pointer}
+.primary{background:var(--brand);color:white}.secondary{background:#eeecff;color:#4c3ec6}.danger{background:#ffebef;color:#ad2339}.ghost{background:#f1f3f9;color:#29324a}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.small{font-size:13px;color:var(--muted)}.hidden{display:none!important}.qitem{border:1px solid var(--line);padding:15px;border-radius:14px;margin:12px 0;background:#fcfcff}
+.option{display:flex;align-items:center;gap:9px;border:1px solid var(--line);padding:11px;border-radius:12px;margin:8px 0;cursor:pointer}.option input{width:auto;margin:0}.option:has(input:checked){border-color:var(--brand);background:#f3f1ff}
+.pill{display:inline-block;border-radius:99px;padding:5px 10px;background:#f0eeff;color:#5144c9;font-size:12px;font-weight:bold}
+.score{font-size:42px;font-weight:900;color:var(--brand);text-align:center}.center{text-align:center}
+table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:11px 8px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:13px}
+.notice{background:#fff8df;border:1px solid #f3df9b;padding:12px;border-radius:12px;font-size:13px;line-height:1.7}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:8px 12px 28px}
+@media(max-width:540px){.card{padding:17px}.logo{font-size:29px}.actions button{flex:1}}
+</style>
+</head>
+<body>
+<header><div class="logo">جاوب عليا ✨</div><div class="tag">اختبر صحابك.. وشوف مين أشطر واحد!</div></header>
+<main class="wrap">
+<section id="home" class="card">
+<h2>أهلاً بيك في جاوب عليا 👋</h2>
+<p>اعمل اختبار بأسئلتك، ابعت اللينك لصحابك، وشوف النتائج والترتيب.</p>
+<div class="actions"><button class="primary" id="adminBtn">إنشاء اختبار / إدارة الأسئلة</button><button class="secondary" id="playBtn">حل الاختبار</button><button class="ghost" id="boardBtn">لوحة النتائج</button></div>
+<p class="small" id="status"></p>
+</section>
+<section id="admin" class="card hidden">
+<h2>🛠️ إنشاء الاختبار</h2>
+<label>عنوان الاختبار</label><input id="quizTitle" placeholder="مثلاً: مين يعرفني أكتر؟" maxlength="100">
+<label>كلمة مرور الإدارة (للحماية داخل الصفحة فقط)</label><input id="adminPass" type="password" placeholder="اختار كلمة مرور" autocomplete="new-password">
+<div class="notice">الأسئلة محفوظة على الجهاز اللي أنشأها. بعد إضافة الأسئلة اضغط «إنشاء لينك الاختبار» وابعته لصحابك. لتجميع النتائج من أجهزة مختلفة، وصّل قاعدة بيانات مجانية حسب ملف التعليمات المرفق.</div>
+<hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+<h3>إضافة سؤال اختيار من متعدد</h3>
+<label>السؤال</label><textarea id="qText" placeholder="اكتب السؤال هنا"></textarea>
+<div class="small">اكتب 4 اختيارات، وحدد الاختيار الصحيح.</div>
+<div id="optionsInputs"></div>
+<label>الإجابة الصحيحة</label><select id="correct"><option value="0">الاختيار الأول</option><option value="1">الاختيار الثاني</option><option value="2">الاختيار الثالث</option><option value="3">الاختيار الرابع</option></select>
+<div class="actions"><button class="primary" id="addQ">إضافة السؤال</button><button class="ghost" id="clearQ">تفريغ الحقول</button></div>
+<h3 style="margin-top:22px">أسئلة الاختبار <span id="qCount" class="pill">0 سؤال</span></h3><div id="questionList"></div>
+<div class="actions"><button class="primary" id="makeLink">إنشاء لينك الاختبار</button><button class="secondary" id="saveLocal">حفظ على الجهاز</button><button class="ghost" id="backHome">رجوع</button></div>
+<div id="linkArea" class="hidden"><label>انسخ اللينك وابعته لصحابك</label><input id="shareUrl" readonly><div class="actions"><button class="primary" id="copyLink">نسخ اللينك</button><button class="secondary" id="openLink">معاينة الاختبار</button></div></div>
+</section>
+<section id="play" class="card hidden">
+<h2 id="playTitle">اختبار جديد</h2><div id="quizContent"></div>
+</section>
+<section id="result" class="card hidden">
+<h2 class="center">خلصت الاختبار! 🎉</h2><div class="score" id="scoreText">0/0</div><p class="center" id="scoreCaption"></p><div id="review"></div><div class="actions"><button class="primary" id="resultBoard">شوف الترتيب</button><button class="ghost" id="resultHome">الصفحة الرئيسية</button></div>
+</section>
+<section id="board" class="card hidden">
+<h2>🏆 ترتيب المشاركين</h2><p class="small" id="boardNote">النتائج المسجلة على هذا الجهاز.</p><div id="leaderboard"></div><div class="actions" style="margin-top:16px"><button class="secondary" id="exportResults">تصدير النتائج CSV</button><button class="ghost" id="boardHome">رجوع</button></div>
+</section>
+</main>
+<footer>جاوب عليا — تحدي الصحاب يبدأ هنا 💜</footer>
+<script>
+const $=id=>document.getElementById(id);
+const STORE='gaweeb_3alaya_v1';
+let questions=[], quizTitle='تحدي الصحاب', currentQuizId='', answers=[], lastResult=null;
+function readStore(){try{return JSON.parse(localStorage.getItem(STORE)||'{"quizzes":{},"results":[]}')}catch(e){return {quizzes:{},results:[]}}}
+function writeStore(x){localStorage.setItem(STORE,JSON.stringify(x))}
+function show(id){['home','admin','play','result','board'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
+function initOptions(){ $('optionsInputs').innerHTML=[0,1,2,3].map(i=>`<label>الاختيار ${['الأول','الثاني','الثالث','الرابع'][i]}</label><input class="optInput" data-i="${i}" placeholder="اكتب الاختيار ${i+1}">`).join('')}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderQs(){ $('qCount').textContent=questions.length+' سؤال';$('questionList').innerHTML=questions.map((q,i)=>`<div class="qitem"><b>${i+1}. ${escapeHtml(q.text)}</b><div class="small">الإجابة الصحيحة: ${escapeHtml(q.options[q.correct])}</div><button class="danger" style="margin-top:8px" onclick="removeQ(${i})">حذف السؤال</button></div>`).join('')||'<p class="small">لسه مفيش أسئلة. ابدأ أضف سؤال.</p>'}
+window.removeQ=i=>{questions.splice(i,1);renderQs()}
+function addQuestion(){const text=$('qText').value.trim(), options=[...document.querySelectorAll('.optInput')].map(x=>x.value.trim()), correct=Number($('correct').value);if(!text||options.some(x=>!x)){alert('اكتب السؤال والاختيارات الأربعة.');return}questions.push({text,options,correct});$('qText').value='';document.querySelectorAll('.optInput').forEach(x=>x.value='');renderQs()}
+function quizPayload(){return {title:quizTitle,questions}}
+function encodeQuiz(q){return btoa(unescape(encodeURIComponent(JSON.stringify(q))))}
+function decodeQuiz(s){return JSON.parse(decodeURIComponent(escape(atob(s))))}
+function quizId(q){return simpleHash(JSON.stringify(q))}
+function simpleHash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(36)}
+function makeLink(){quizTitle=$('quizTitle').value.trim()||'تحدي الصحاب';if(questions.length===0){alert('ضيف سؤال واحد على الأقل الأول.');return}const q=quizPayload();currentQuizId=quizId(q);const data=readStore();data.quizzes[currentQuizId]=q;writeStore(data);const url=new URL(location.href);url.hash='quiz='+encodeURIComponent(encodeQuiz(q));$('shareUrl').value=url.href;$('linkArea').classList.remove('hidden');}
+function loadQuiz(q){if(!q||!Array.isArray(q.questions)||!q.questions.length){alert('لينك الاختبار مش صحيح أو مفيهوش أسئلة.');return}quizTitle=q.title||'تحدي الصحاب';questions=q.questions;currentQuizId=quizId(q);answers=Array(questions.length).fill(null);$('playTitle').textContent=quizTitle;$('quizContent').innerHTML=`<label>اسمك يا بطل</label><input id="playerName" maxlength="50" placeholder="اكتب اسمك عشان النتيجة تظهر في الترتيب"><div id="playQuestions"></div><button class="primary" id="submitQuiz" style="width:100%;margin-top:14px">تسليم الإجابات وحساب النتيجة</button><p class="small">راجع إجاباتك قبل التسليم.</p>`+$('quizContent').innerHTML;
+$('playQuestions').innerHTML=questions.map((q,i)=>`<div class="qitem"><b>${i+1}. ${escapeHtml(q.text)}</b>${q.options.map((o,j)=>`<label class="option"><input type="radio" name="q${i}" value="${j}"><span>${escapeHtml(o)}</span></label>`).join('')}</div>`).join('');
+$('submitQuiz').onclick=submitQuiz;show('play')}
+function submitQuiz(){const name=$('playerName').value.trim();if(!name){alert('اكتب اسمك الأول.');return}let score=0;answers=questions.map((q,i)=>{const el=document.querySelector(`input[name="q${i}"]:checked`);const a=el?Number(el.value):-1;if(a===q.correct)score++;return a});lastResult={name,score,total:questions.length,quizId:currentQuizId,title:quizTitle,date:new Date().toISOString()};const d=readStore();d.results.push(lastResult);writeStore(d);$('scoreText').textContent=`${score} / ${questions.length}`;$('scoreCaption').textContent=`يا ${name}، جبت ${Math.round(score/questions.length*100)}%`; $('review').innerHTML=questions.map((q,i)=>`<div class="qitem"><b>${i+1}. ${escapeHtml(q.text)}</b><div style="color:${answers[i]===q.correct?'var(--green)':'var(--red)'};margin-top:7px">${answers[i]===q.correct?'✓ إجابة صحيحة':'✗ إجابة غير صحيحة'}</div><div class="small">الإجابة الصحيحة: ${escapeHtml(q.options[q.correct])}</div></div>`).join('');show('result')}
+function renderBoard(){const d=readStore();let arr=d.results.filter(r=>!currentQuizId||r.quizId===currentQuizId);arr.sort((a,b)=>b.score/b.total-a.score/a.total||b.score-a.score);$('leaderboard').innerHTML=arr.length?`<table><thead><tr><th>المركز</th><th>الاسم</th><th>الدرجة</th><th>النسبة</th></tr></thead><tbody>${arr.map((r,i)=>`<tr><td>${['🥇','🥈','🥉'][i]||i+1}</td><td>${escapeHtml(r.name)}</td><td>${r.score}/${r.total}</td><td>${Math.round(r.score/r.total*100)}%</td></tr>`).join('')}</tbody></table>`:'<p>لسه مفيش نتائج محفوظة على الجهاز ده.</p>';show('board')}
+function exportCSV(){const d=readStore();let arr=d.results.filter(r=>!currentQuizId||r.quizId===currentQuizId);const csv='الاسم,الاختبار,الدرجة,الإجمالي,النسبة\n'+arr.map(r=>[r.name,r.title,r.score,r.total,Math.round(r.score/r.total*100)+'%'].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}));a.download='gaweeb-results.csv';a.click();URL.revokeObjectURL(a.href)}
+$('adminBtn').onclick=()=>{show('admin');renderQs()};$('playBtn').onclick=()=>{if(questions.length)loadQuiz(quizPayload());else alert('أنشئ اختبار الأول أو افتح لينك اختبار وصلك.')}
+$('boardBtn').onclick=()=>{currentQuizId='';renderBoard()};$('addQ').onclick=addQuestion;$('clearQ').onclick=()=>{$('qText').value='';document.querySelectorAll('.optInput').forEach(x=>x.value='')};
+$('makeLink').onclick=makeLink;$('saveLocal').onclick=()=>{quizTitle=$('quizTitle').value.trim()||'تحدي الصحاب';const d=readStore();const q=quizPayload();d.quizzes[quizId(q)]=q;writeStore(d);alert('اتحفظ الاختبار على الجهاز ده.')};
+$('copyLink').onclick=async()=>{try{await navigator.clipboard.writeText($('shareUrl').value);alert('اتنسخ اللينك! ابعته لصحابك.')}catch(e){$('shareUrl').select();document.execCommand('copy');alert('حاولت أنسخ اللينك؛ لو ما اتنسخش، حدده وانسخه يدويًا.')}};
+$('openLink').onclick=()=>{const m=$('shareUrl').value.match(/#quiz=(.*)$/);if(m)try{loadQuiz(decodeQuiz(decodeURIComponent(m[1])))}catch(e){alert('حصل خطأ في اللينك')}};
+$('backHome').onclick=()=>show('home');$('resultHome').onclick=()=>show('home');$('resultBoard').onclick=()=>renderBoard();$('boardHome').onclick=()=>show('home');$('exportResults').onclick=exportCSV;
+initOptions();
+(function boot(){const m=location.hash.match(/quiz=([^&]+)/);if(m){try{const q=decodeQuiz(decodeURIComponent(m[1]));loadQuiz(q);$('status').textContent='فتحت اختبار من لينك مشاركة.'}catch(e){$('status').textContent='تعذر فتح الاختبار من اللينك.'}}else{const d=readStore();const ids=Object.keys(d.quizzes);if(ids.length){const q=d.quizzes[ids[ids.length-1]];questions=q.questions;quizTitle=q.title;$('quizTitle').value=quizTitle;renderQs();$('status').textContent='فيه اختبار محفوظ على هذا الجهاز.'}}})();
+</script>
+</body></html>
